@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}任務詳情 - 任務管理系統{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">任務詳情</h5>
+                <a href="{{ url_for('tasks.index') }}" class="btn btn-sm btn-outline-secondary">返回列表</a>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title {% if task.is_completed %}completed-task{% endif %}">
+                    {{ task.title }}
+                </h3>
+                
+                <div class="mb-4">
+                    <span class="badge {% if task.is_completed %}bg-success{% else %}bg-secondary{% endif %} me-2">
+                        {% if task.is_completed %}已完成{% else %}未完成{% endif %}
+                    </span>
+                    
+                    {% if task.priority == 'high' %}
+                        <span class="badge bg-danger me-2">高優先級</span>
+                    {% elif task.priority == 'medium' %}
+                        <span class="badge bg-warning text-dark me-2">中優先級</span>
+                    {% else %}
+                        <span class="badge bg-info text-dark me-2">低優先級</span>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="text-muted">任務描述</h6>
+                    <p class="card-text border p-3 rounded bg-light">
+                        {{ task.description or '無描述' }}
+                    </p>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-sm-6">
+                        <h6 class="text-muted">截止日期</h6>
+                        <p><i class="far fa-calendar-alt"></i> {{ task.due_date or '未設定' }}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <h6 class="text-muted">建立時間</h6>
+                        <p><i class="far fa-clock"></i> {{ task.created_at }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-white d-flex justify-content-between">
+                <!-- Toggle Status Form -->
+                <form action="{{ url_for('tasks.toggle', id=task.id) }}" method="POST" class="m-0">
+                    <button type="submit" class="btn {% if task.is_completed %}btn-outline-secondary{% else %}btn-success{% endif %}">
+                        {% if task.is_completed %}
+                            <i class="fas fa-undo"></i> 標記為未完成
+                        {% else %}
+                            <i class="fas fa-check"></i> 標記為完成
+                        {% endif %}
+                    </button>
+                </form>
+                
+                <div class="btn-group">
+                    <a href="{{ url_for('tasks.edit', id=task.id) }}" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> 編輯
+                    </a>
+                    <form action="{{ url_for('tasks.delete', id=task.id) }}" method="POST" class="d-inline" onsubmit="return confirm('確定要刪除這個任務嗎？');">
+                        <button type="submit" class="btn btn-danger" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                            <i class="fas fa-trash"></i> 刪除
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
